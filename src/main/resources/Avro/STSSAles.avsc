@@ -1,0 +1,346 @@
+{
+  "name": "STSSales",
+  "type": "record",
+  "namespace": "com.acme.avro",
+  "fields": [
+    {
+      "name": "partnerMessageId",
+      "type": "string"
+    },
+    {
+      "name": "partnerId",
+      "type": "string"
+    },
+    {
+      "name": "storeId",
+      "type": "int"
+    },
+    {
+      "name": "storeName",
+      "type": "string"
+    },
+    {
+      "name": "timeStamp",
+      "type": "string"
+    },
+    {
+      "name": "payLoad",
+      "type": {
+        "name": "payLoad",
+        "type": "record",
+        "fields": [
+          {
+            "name": "workstationId",
+            "type": "string"
+          },
+          {
+            "name": "sequenceNumber",
+            "type": "int"
+          },
+          {
+            "name": "transaction",
+            "type": {
+              "name": "transaction",
+              "type": "record",
+              "fields": [
+                {
+                  "name": "lineItems",
+                  "type": {
+                    "type": "array",
+                    "items": {
+                      "name": "lineItems_record",
+                      "type": "record",
+                      "fields": [
+                        {
+                          "name": "lineTransType",
+                          "type": "string"
+                        },
+                        {
+                          "name": "lineType",
+                          "type": "string"
+                        },
+                        {
+                          "name": "lineSeq",
+                          "type": "int"
+                        },
+                        {
+                          "name": "posItemId",
+                          "type": "string"
+                        },
+                        {
+                          "name": "eanNumber",
+                          "type": "string"
+                        },
+                        {
+                          "name": "description",
+                          "type": "string"
+                        },
+                        {
+                          "name": "jsItemFlag",
+                          "type": "string"
+                        },
+                        {
+                          "name": "unitPrice",
+                          "type": "string"
+                        },
+                        {
+                          "name": "quantity",
+                          "type": "string"
+                        },
+                        {
+                          "name": "uom",
+                          "type": "string"
+                        },
+                        {
+                          "name": "extendedValue",
+                          "type": "string"
+                        },
+                        {
+                          "name": "returnCode",
+                          "type": "string"
+                        },
+                        {
+                          "name": "priceModifier",
+                          "type": {
+                            "name": "priceModifier",
+                            "type": "record",
+                            "fields": [
+                              {
+                                "name": "promotionCode",
+                                "type": "string"
+                              },
+                              {
+                                "name": "partnerCode",
+                                "type": "string"
+                              },
+                              {
+                                "name": "promotionDiscount",
+                                "type": "string"
+                              },
+                              {
+                                "name": "staffDiscount",
+                                "type": "string"
+                              },
+                              {
+                                "name": "newPrice",
+                                "type": "string"
+                              },
+                              {
+                                "name": "promotionType",
+                                "type": "string"
+                              },
+                              {
+                                "name": "promotionDescription",
+                                "type": "string"
+                              }
+                            ]
+                          }
+                        },
+						{
+                          "name": "source",
+                          "type": "string"
+                        },
+                        {
+                          "name": "consumableGroup",
+                          "type": "string"
+                        },
+                        {
+                          "name": "hierarchy",
+                          "type": {
+                            "name": "hierarchy",
+                            "type": "record",
+                            "fields": [
+                              {
+                                "name": "groupId",
+                                "type": "string"
+                              },
+                              {
+                                "name": "subcategoryId",
+                                "type": "string"
+                              },
+                              {
+                                "name": "categoryId",
+                                "type": "string"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "name": "scanData",
+                          "type": "string"
+                        },
+                        {
+                          "name": "startDateTime",
+                          "type": "string"
+                        },
+                        {
+                          "name": "endDateTime",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "tenderTypes",
+                  "type": {
+                    "type": "array",
+                    "items": {
+                      "name": "tenderTypes_record",
+                      "type": "record",
+                      "fields": [
+                        {
+                          "name": "tenderType",
+                          "type": "string"
+                        },
+                        {
+                          "name": "lineSeq",
+                          "type": "int"
+                        },
+                        {
+                          "name": "amount",
+                          "type": "string"
+                        },
+                        {
+                          "name": "startDateTime",
+                          "type": "string"
+                        },
+                        {
+                          "name": "endDateTime",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "promotionRedemption",
+                  "type": {
+                    "type": "array",
+                    "items": {
+                      "name": "promotionRedemption_record",
+                      "type": "record",
+                      "fields": [
+                        {
+                          "name": "promotionCode",
+                          "type": "string"
+                        },
+                        {
+                          "name": "partnerCode",
+                          "type": "string"
+                        },
+                        {
+                          "name": "redemptionQuantity",
+                          "type": "int"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "tradingDayDate",
+            "type": "string"
+          },
+          {
+            "name": "customerLoyalty",
+            "type": {
+              "name": "customerLoyalty",
+              "type": "record",
+              "fields": [
+                {
+                  "name": "nectarCard",
+                  "type": "string"
+                },
+                {
+                  "name": "issueNo",
+                  "type": "string"
+                },
+                {
+                  "name": "pointsAward",
+                  "type": "int"
+                },
+                {
+                  "name": "includesBonus",
+                  "type": "int"
+                }
+              ]
+            }
+          },
+          {
+            "name": "staffDiscount",
+            "type": {
+              "name": "staffDiscount",
+              "type": "record",
+              "fields": [
+                {
+                  "name": "staffDiscountCard",
+                  "type": "string"
+                },
+                {
+                  "name": "qualifyingSpend",
+                  "type": "string"
+                },
+                {
+                  "name": "discountRate",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "transactionLink",
+            "type": {
+              "name": "transactionLink",
+              "type": "record",
+              "fields": [
+                {
+                  "name": "linkStoreId",
+                  "type": "string"
+                },
+                {
+                  "name": "linkWorkstationId",
+                  "type": "string"
+                },
+                {
+                  "name": "linkDate",
+                  "type": "string"
+                },
+                {
+                  "name": "linkSequenceNumber",
+                  "type": "int"
+                }
+              ]
+            }
+          },
+          {
+            "name": "totalvalue",
+            "type": "string"
+          },
+          {
+            "name": "totalGrossAmount",
+            "type": "string"
+          },
+          {
+            "name": "totalNetAmount",
+            "type": "string"
+          },
+          {
+            "name": "totalQuantity",
+            "type": "string"
+          },
+          {
+            "name": "startTransDateTime",
+            "type": "string"
+          },
+          {
+            "name": "endTransDateTime",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}
