@@ -1,8 +1,15 @@
 package com.sainsburys.transformers.SalesConsumer.KafkaListener;
 
-import com.sainsburys.transformers.SalesConsumer.Adapters.Insert_SA_BASKET_HEAD;
-import com.sainsburys.transformers.SalesConsumer.Adapters.Insert_SA_TXN_RECON_HEAD;
-import io.confluent.developer.avro.RawSales;
+import com.acme.avro.STSSales;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sainsburys.transformers.SalesConsumer.Model.Converter;
+import com.sainsburys.transformers.SalesConsumer.Model.LineItem;
+import com.sainsburys.transformers.SalesConsumer.Model.Salesmessage;
+import com.sainsburys.transformers.SalesConsumer.adapters.Insert_SA_BASKET_HEAD;
+import com.sainsburys.transformers.SalesConsumer.adapters.Insert_SA_BASKET_ITEM;
+import com.sainsburys.transformers.SalesConsumer.adapters.Insert_SA_BASKET_SUBTOTAL;
+import com.sainsburys.transformers.SalesConsumer.adapters.Insert_SA_TXN_RECON_HEAD;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import org.json.simple.JSONObject;
@@ -14,19 +21,17 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 //import java.sql.*;
 
+import java.io.IOException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 
 @EnableKafka
@@ -39,6 +44,7 @@ public class KafkaConsumer {
     private boolean commitOffsets;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    //public STSSales sales;
 
 
     //Connection connection = dataSource.getConnection();
@@ -49,33 +55,95 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "${topic_name}", groupId = "${consumer_group_id}", containerFactory = "kafkaListenerContainerFactory")
 
-    public void listen(ConsumerRecord<String, RawSales> record) throws SQLException {
+    public void listen(ConsumerRecord<String, STSSales> record) throws SQLException {
         LOGGER.info(String.format("Consumed message -> %s", record.value()));
-        JSONParser parser = new JSONParser();
-
-        Object obj = null;
-        try {
-            obj = parser.parse(String.valueOf(record.value()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        JSONObject jsonObject = (JSONObject) obj;
-
-        Long STOREID = (Long) jsonObject.get("storeId");
-        System.out.println(STOREID );
-
-        String TILL_ID = (String) jsonObject.get("tillId");
-        System.out.println(TILL_ID);
-
-        String BASKET_KEY = (String) jsonObject.get("basketKey");
-        System.out.println(BASKET_KEY);
         Connection conn = DataSourceUtils.getConnection(jdbcTemplate.getDataSource());
-        System.out.println("Connection : " +conn );
-        LOGGER.info("Inserting trans header");
-        Insert_SA_TXN_RECON_HEAD recon = new Insert_SA_TXN_RECON_HEAD(conn,STOREID);
+        try {
+            // build Recon Header
+            Salesmessage data = Converter.fromJsonString(String.valueOf(record.value()));
+            String partnerid = data.getPartnerID();
+            System.out.println("partnerid" +partnerid );
+            Long storeId = data.getStoreID();
+            System.out.println("storeId" +storeId );
+            String workStationId = data.getPayLoad().getWorkstationID();
+            System.out.println("workStationId" +workStationId );
+            Long sequenceNo = data.getPayLoad().getSequenceNumber();
+            System.out.println("sequenceNo" +sequenceNo );
+            OffsetDateTime StartTransDateTime = data.getPayLoad().getStartTransDateTime();
+            Timestamp loaddate =Timestamp.valueOf(StartTransDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
+            Date TradingDayDate = Date.valueOf(data.getPayLoad().getTradingDayDate());
+            // Insert Recon Header
+            //Connection conn = DataSourceUtils.getConnection(jdbcTemplate.getDataSource());
+            System.out.println("Connection : " +conn );
+            LOGGER.info("Inserting trans header");
+            Insert_SA_TXN_RECON_HEAD recon = new Insert_SA_TXN_RECON_HEAD(conn,storeId, workStationId, sequenceNo, loaddate, TradingDayDate );
 
-        LOGGER.info("Inserting basket header");
-        Insert_SA_BASKET_HEAD baskethead = new Insert_SA_BASKET_HEAD(conn,STOREID);
+            // build Basket header
+            //String basketEan = data.getPayLoad().getTransaction().getLineItems()[0].getEanNumber();
+            // Insert Basket Header
+            LOGGER.info("Inserting basket header");
+            Insert_SA_BASKET_HEAD baskethead = new Insert_SA_BASKET_HEAD(conn,storeId,TradingDayDate,loaddate, workStationId, sequenceNo);
+
+            // build subtotals
+
+
+            Double totalQuantity = Double.valueOf(data.getPayLoad().getTotalQuantity());
+            Double totalNetAmount = Double.valueOf(data.getPayLoad().getTotalNetAmount());
+
+            LOGGER.info("Inserting subtotals");
+            Insert_SA_BASKET_SUBTOTAL subtotals = new Insert_SA_BASKET_SUBTOTAL(conn,storeId,TradingDayDate,loaddate, totalQuantity, totalNetAmount);
+
+
+
+            // loop over line items
+            int index = 0 ;
+            for (LineItem i  : data.getPayLoad().getTransaction().getLineItems()) {
+
+                String eanNumber = data.getPayLoad().getTransaction().getLineItems()[index].getEanNumber();
+                String posItemId = data.getPayLoad().getTransaction().getLineItems()[index].getPosItemID();
+                Double extendedValue = Double.valueOf(data.getPayLoad().getTransaction().getLineItems()[index].getExtendedValue());
+                System.out.println ( "ean number :" +eanNumber);
+                System.out.println ( "SKU :" +posItemId);
+                System.out.println ( "extendedValue :" +extendedValue);
+                Integer quantity  = Integer.valueOf((data.getPayLoad().getTransaction().getLineItems()[index].getQuantity()));
+                System.out.println ( "quantity :" +quantity);
+                Double unitPrice  = Double.valueOf(data.getPayLoad().getTransaction().getLineItems()[index].getUnitPrice());
+                System.out.println ( "unitPrice  :" +unitPrice );
+                String scanData = data.getPayLoad().getTransaction().getLineItems()[index].getScanData();
+                System.out.println ( "scanData  :" +scanData );
+                String returnCode = data.getPayLoad().getTransaction().getLineItems()[index].getReturnCode();
+                System.out.println ( "returnCode  :" +returnCode );
+                String salesGroup = data.getPayLoad().getTransaction().getLineItems()[index].getConsumableGroup();
+                Long classGroup = Long.valueOf(data.getPayLoad().getTransaction().getLineItems()[index].getHierarchy().getGroupID());
+                LOGGER.info("Inserting basket header");
+                String lineType = data.getPayLoad().getTransaction().getLineItems()[index].getLineType();
+                String fuelItem = "N";
+                if (lineType == "Fuel")
+                         fuelItem = "Y";
+
+                Insert_SA_BASKET_ITEM basketitem = new Insert_SA_BASKET_ITEM(conn,storeId,TradingDayDate,loaddate, eanNumber,posItemId,extendedValue,
+                        quantity, unitPrice,scanData,returnCode, salesGroup,classGroup , fuelItem);
+                index = index +1;
+            }
+
+
+
+
+
+
+
+
+            try {
+                conn.commit();
+                System.out.println("Row successfully inserted ");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                conn.rollback();
+            }
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
 
 
 
@@ -111,13 +179,7 @@ public class KafkaConsumer {
             e.printStackTrace();
         }
 */
-        try {
-            conn.commit();
-            System.out.println("Row successfully inserted ");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            conn.rollback();
-        }
+
 
     }
 }

@@ -13,7 +13,7 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class lineItems_record extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 4177761514170899164L;
+  private static final long serialVersionUID = -2133065538119996165L;
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"lineItems_record\",\"namespace\":\"com.acme.avro\",\"fields\":[{\"name\":\"lineTransType\",\"type\":\"string\"},{\"name\":\"lineType\",\"type\":\"string\"},{\"name\":\"lineSeq\",\"type\":\"int\"},{\"name\":\"posItemId\",\"type\":\"string\"},{\"name\":\"eanNumber\",\"type\":\"string\"},{\"name\":\"description\",\"type\":\"string\"},{\"name\":\"jsItemFlag\",\"type\":\"string\"},{\"name\":\"unitPrice\",\"type\":\"string\"},{\"name\":\"quantity\",\"type\":\"string\"},{\"name\":\"uom\",\"type\":\"string\"},{\"name\":\"extendedValue\",\"type\":\"string\"},{\"name\":\"returnCode\",\"type\":\"string\"},{\"name\":\"priceModifier\",\"type\":{\"type\":\"record\",\"name\":\"priceModifier\",\"fields\":[{\"name\":\"promotionCode\",\"type\":\"string\"},{\"name\":\"partnerCode\",\"type\":\"string\"},{\"name\":\"promotionDiscount\",\"type\":\"string\"},{\"name\":\"staffDiscount\",\"type\":\"string\"},{\"name\":\"newPrice\",\"type\":\"string\"},{\"name\":\"promotionType\",\"type\":\"string\"},{\"name\":\"promotionDescription\",\"type\":\"string\"}]}},{\"name\":\"source\",\"type\":\"string\"},{\"name\":\"consumableGroup\",\"type\":\"string\"},{\"name\":\"hierarchy\",\"type\":{\"type\":\"record\",\"name\":\"hierarchy\",\"fields\":[{\"name\":\"groupId\",\"type\":\"string\"},{\"name\":\"subcategoryId\",\"type\":\"string\"},{\"name\":\"categoryId\",\"type\":\"string\"}]}},{\"name\":\"scanData\",\"type\":\"string\"},{\"name\":\"startDateTime\",\"type\":\"string\"},{\"name\":\"endDateTime\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
@@ -340,7 +340,7 @@ public class lineItems_record extends org.apache.avro.specific.SpecificRecordBas
    * Gets the value of the 'extendedValue' field.
    * @return The value of the 'extendedValue' field.
    */
-  public CharSequence getExtendedValue() {
+  public java.lang.CharSequence getExtendedValue() {
     return extendedValue;
   }
 

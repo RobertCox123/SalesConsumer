@@ -13,7 +13,7 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class staffDiscount extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 1488395917340134038L;
+  private static final long serialVersionUID = 5658479254495704732L;
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"staffDiscount\",\"namespace\":\"com.acme.avro\",\"fields\":[{\"name\":\"staffDiscountCard\",\"type\":\"string\"},{\"name\":\"qualifyingSpend\",\"type\":\"string\"},{\"name\":\"discountRate\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 

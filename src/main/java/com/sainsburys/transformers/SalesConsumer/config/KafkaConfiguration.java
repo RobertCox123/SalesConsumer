@@ -1,8 +1,7 @@
-package com.sainsburys.transformers.SalesConsumer.Config;
+package com.sainsburys.transformers.SalesConsumer.config;
 
 
 import com.acme.avro.STSSales;
-import io.confluent.developer.avro.RawSales;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
 
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -24,12 +22,8 @@ import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
-import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +40,7 @@ public class KafkaConfiguration {
 
 
     @Bean
-    public ConsumerFactory<String, RawSales> consumerFactory(){
+    public ConsumerFactory<String, STSSales> consumerFactory(){
    // public DefaultKafkaConsumerFactory consumerFactory(){
 
         Map<String, Object> props = new HashMap<>();
@@ -76,10 +70,10 @@ public class KafkaConfiguration {
 
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, RawSales> kafkaListenerContainerFactory(
-            ConsumerFactory<String, RawSales> consumerFactory,
+    public ConcurrentKafkaListenerContainerFactory<String, STSSales> kafkaListenerContainerFactory(
+            ConsumerFactory<String, STSSales> consumerFactory,
             @Qualifier("retryTemplate") RetryTemplate retryTemplate)    {
-        ConcurrentKafkaListenerContainerFactory<String, RawSales> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, STSSales> factory = new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(1);

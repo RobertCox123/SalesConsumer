@@ -1,8 +1,7 @@
-package com.sainsburys.transformers.SalesConsumer.Adapters;
+package com.sainsburys.transformers.SalesConsumer.adapters;
 
 import com.acme.avro.STSSales;
 import com.acme.avro.lineItems_record;
-import io.confluent.developer.avro.RawSales;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public class Insert_SA_BASKET_ITEM {
     private lineItems_record basketitems;
 
 
-    public Insert_SA_BASKET_ITEM(Connection conn, Long STOREID) throws SQLException {
+    public Insert_SA_BASKET_ITEM(Connection conn, Long storeId, Date tradingDayDate, Timestamp startTransDateTime, String eanNumber, String posItemId, Double extendedValue, Integer quantity, Double unitPrice, String scanData, String returnCode, String salesGroup, Long group, String fuelItem) throws SQLException {
 
 
         //Connection conn = DataSourceUtils.getConnection(jdbcTemplate.getDataSource());
@@ -40,31 +39,51 @@ public class Insert_SA_BASKET_ITEM {
 
 
         // psInsert.setLong(1,9999);
-        psInsert.setDate(1, Date.valueOf("2021-07-06"));
-        psInsert.setLong(2, STOREID);
-        psInsert.setDate(3, Date.valueOf("2021-07-14"));
-        psInsert.setString(4, "N");
-        psInsert.setString(4, "N");
-        psInsert.setLong(2, STOREID);
-        psInsert.setString(2, String.valueOf(basketitems.getPosItemId()));
-        psInsert.setString(2, String.valueOf(basketitems.getEanNumber()));
-        psInsert.setString(4, "N");
-        psInsert.setString(4, "N");
-        psInsert.setString(4, "N");
-        psInsert.setString(4, "N");
-        psInsert.setString(4, "N");
-        psInsert.setString(4, "N");
-        psInsert.setString(4, "0");
-        psInsert.setDouble(4, Double.parseDouble((String) basketitems.getExtendedValue())); // avro generated code changed to return double
-        psInsert.setLong(4, Integer.parseInt(String.valueOf(basketitems.getQuantity()))); // avro Char sequence
-        psInsert.setDouble(4, Double.parseDouble((String) basketitems.getUnitPrice()));
-        psInsert.setInt(2, 0);
-        psInsert.setDouble(4, Double.parseDouble((String) basketitems.getUnitPrice()));
-        psInsert.setString(4, "N");
-        psInsert.setString(4, String.valueOf(basketitems.getScanData()));
-        psInsert.setString(4, "N");
-        psInsert.setString(4, String.valueOf(basketitems.getReturnCode()));
-        psInsert.setString(4, String.valueOf(basketitems.getScanData()));
+        psInsert.setDate(1, tradingDayDate);
+        psInsert.setLong(2, storeId);
+        psInsert.setTimestamp(3, startTransDateTime);//loaddate
+        psInsert.setString(4, salesGroup);
+        psInsert.setString(5, "S");
+        psInsert.setLong(6, group);
+        psInsert.setString(7, posItemId);
+        psInsert.setString(8, eanNumber);
+        psInsert.setString(9, "N");
+        psInsert.setString(10, "N");
+        psInsert.setString(11, "N");
+        psInsert.setString(12, "X");
+        psInsert.setString(13, "N");
+        psInsert.setString(14, "X");
+        psInsert.setString(15, "X");
+        psInsert.setDouble(16, extendedValue);
+        psInsert.setLong(17, quantity);
+        psInsert.setDouble(18, unitPrice);
+        psInsert.setInt(19, 0);
+        psInsert.setDouble(20, unitPrice);
+        psInsert.setString(20, "N");
+        psInsert.setString(21, scanData);
+        psInsert.setString(22, "N");
+        psInsert.setString(23,returnCode);
+        psInsert.setString(24, "K");
+        psInsert.setDouble(25, quantity);
+        psInsert.setString(26, "0000000000000");
+        psInsert.setDouble(27,  0000);
+        psInsert.setDouble(28,  0.0000);
+        psInsert.setString(29, "N");
+        psInsert.setDouble(30, extendedValue); // should be discount amount but missing
+        psInsert.setString(29, fuelItem);
+        psInsert.setString(29, "N");
+        psInsert.setDouble(20, unitPrice * 100);
+        psInsert.setDouble(20, unitPrice);
+
+
+
+
+
+
+
+
+
+
 
 
 
